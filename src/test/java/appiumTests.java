@@ -6,6 +6,8 @@ import io.appium.java_client.ios.IOSDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.testng.annotations.*;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -58,15 +60,25 @@ public class appiumTests {
 
     @Test
     public void testLoginPage() throws InterruptedException {
-//        WebDriverWait wait = new WebDriverWait(driver, 90);
+        WebDriverWait wait = new WebDriverWait(driver, 90);
 //        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-email")));
 
         driver.findElementByAccessibilityId("login-email").sendKeys("dalekaya.taiga@gmail.com");
         driver.findElementByAccessibilityId("login-password").sendKeys("FFFtDC1");
         driver.findElementByAccessibilityId("login-button").click();
+        wait.until(ExpectedConditions.alertIsPresent());
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+        System.out.println("Unsuccessful login with incorrect credentials");
 
-        WebElement errorMessage = (WebElement) driver.findElementsByAccessibilityId("login failed");
-        assert errorMessage.getText().equals("login failed");
+        driver.findElementByAccessibilityId("login-password").clear();
+        driver.findElementByAccessibilityId("login-password").sendKeys("FFFtDC");
+        driver.findElementByAccessibilityId("login-button").click();
+        MobileElement helpIcon =  (MobileElement) driver.findElementByAccessibilityId("help_icon");
+        wait.until(ExpectedConditions.visibilityOf(helpIcon));
+        assert helpIcon.isDisplayed();
+        System.out.println("Successful login with correct credentials");
+
     }
 
     @After
